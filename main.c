@@ -12,8 +12,8 @@ int * openFile(const char * filename,int *col,int *fil)
     // Si el archivo no es NULL
     
     fscanf(f,"%d %d ",&(*col),&(*fil));     // Se guardan las columnas y filas
-    int * ciudad = (int *)malloc((*fil)*sizeof(int)); // Arreglo que representa una ciudad
-    for (size_t i = 0; i < (*fil); i++) 
+    int * ciudad = (int *)malloc((*col)*sizeof(int)); // Arreglo que representa una ciudad
+    for (size_t i = 0; i < (*col); i++) 
     {
         ciudad[i] = -1;    // Se representa con un -1 cuando la ciudad no tiene sucursal
     }
@@ -22,26 +22,24 @@ int * openFile(const char * filename,int *col,int *fil)
     fscanf(f,"%d ",&sucursales);    // Se guardan la cantidad de sucursales iniciales
     for (size_t i = 0; i < sucursales; i++)
     {
-        /*******************>>>>>>>>>>>>>>>>IMPORTANTE<<<<<<<<<<<<<<<<<<<<<******************/
-        // No estoy muy seguro si en el archivo es fila columna o columna fila    
-        int fila,columna;
-        fscanf(f,"%d %d ",&fila,&columna);
-        ciudad[fila] = columna;         // Se colocan las sucursales en el arreglo 
+        int columna,fila;
+        fscanf(f,"%d %d ",&columna,&fila);
+        ciudad[columna] = fila;         // Se colocan las sucursales en el arreglo 
     }
 
     fclose(f);
 	return ciudad;    
 }
 
-void imprimirCiudad(int *ciudad,int filas){
+void imprimirCiudad(int *ciudad,int col){
 	printf("\t*");
-	for (size_t i = 0; i < filas; i++)
+	for (size_t i = 0; i < col; i++)
 	{
 		printf("---*");
 	}
 	printf("\n");
 	printf("\t|");
-	for (size_t i = 0; i < filas; i++)
+	for (size_t i = 0; i < col; i++)
 	{
         if(ciudad[i] > 10 || ciudad[i] < 0)
         {
@@ -54,7 +52,7 @@ void imprimirCiudad(int *ciudad,int filas){
 	}
 	printf("\n");
 	printf("\t*");
-	for (size_t i = 0; i < filas; i++)
+	for (size_t i = 0; i < col; i++)
 	{
 		printf("---*");
 	}
@@ -66,7 +64,7 @@ int main(int argc, char const *argv[])
 {
     int columnas,filas;
     int *ciudad = openFile(argv[1],&columnas,&filas);
-    imprimirCiudad(ciudad,filas);
+    imprimirCiudad(ciudad,columnas);
 
     free(ciudad);
     return 0;
