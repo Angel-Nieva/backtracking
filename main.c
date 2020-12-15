@@ -62,6 +62,7 @@ void imprimirCiudad(int *ciudad,int col){
 
 int main(int argc, char const *argv[])
 {
+    //Hola mundo
     int columnas,filas;
     int *ciudad = openFile(argv[1],&columnas,&filas);
     imprimirCiudad(ciudad,columnas);
