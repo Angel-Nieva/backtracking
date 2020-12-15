@@ -68,5 +68,9 @@ int main(int argc, char const *argv[])
     imprimirCiudad(ciudad,columnas);
 
     free(ciudad);
+
+
+//hola como estas
+
     return 0;
 }
