@@ -1,6 +1,13 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+/**
+ * @brief Abre el archivo de entrada y crea un arreglo de enteros que representa una ciudad
+ * @param filename Nomrbre archivo de entrada
+ * @param col Cantidad de columnas del arreglo
+ * @param fil Cantidad de filas en el arreglo
+ * @return Arreglo de enteros
+ */
 int * openFile(const char * filename,int *col,int *fil)
 {
     FILE * f;
@@ -60,44 +67,131 @@ void imprimirCiudad(int *ciudad,int col){
     return;
 }
 
-// Entradas: arreglo ciudad, entero equivalente a la columna deseada a buscar y un entero del numero maximo de columnas
-// Salida: 1 si no se encontraron fallas, 0 en caso contrario 
-int verificarCiudad(int *ciudad, int Ncolumna, int columnas){
-    int suma = Ncolumna + ciudad[Ncolumna]; // es la suma de las filas y columnas para verificar si tiene alguna diagonal
-    int resta = ciudad[Ncolumna]- Ncolumna;// lo mismo que el anterior pero con la resta
-    int contador = 0;
-    for (size_t i = 0; i < columnas; i++) // Mientras no se revisen todas las columnas, en si esto ira revisando si se encuentra otra red de forma horizontal o diagonal
+/**
+ * @brief Verifica si una ciudad cumple con las condiciones de las sucursales, no repetir columnas,filas ni diagonales
+ * @param ciudad Arreglo que representa la ciudad
+ * @param Ncolmna Columna que esta siendo verificada
+ * @param col Cantidad de columnas en el arreglo
+ * @return int 1 si la ciudad cumple con las condiciones, 0 en caso contrario
+ */
+int verificarCiudad(int *ciudad, int Ncolumna, int col){
+    int suma = Ncolumna + ciudad[Ncolumna];  // es la suma de las filas y columnas para verificar si tiene alguna diagonal
+    int resta = ciudad[Ncolumna]- Ncolumna;  // lo mismo que el anterior pero con la resta
+    for (size_t i = 0; i < col; i++)    // Mientras no se revisen todas las columnas, en si esto ira revisando si se encuentra otra red de forma horizontal o diagonal
     {        
-        if(contador != Ncolumna && ciudad[contador]!= -1 && ciudad[Ncolumna]!= -1 ){
-            if(ciudad[contador] == ciudad[Ncolumna]){       // Igual fila
+        if( i != Ncolumna && ciudad[i]!= -1 && ciudad[Ncolumna]!= -1 ){
+            if(ciudad[i] == ciudad[Ncolumna]){
                 return 0;
             }
-            else if (ciudad[contador] + contador == suma){  // Igual diagonal ascendente
+            else if (ciudad[i] + i == suma){
                 return 0;
             }
-            else if (ciudad[contador] - contador == resta){ // Igual diagonal descendente
+            else if (ciudad[i] - i == resta){
                 return 0;
             }                            
         }
-         contador++;
     }
     return 1;
 }
 
-int main(int argc, char const *argv[])
+/**
+ * @brief Cuenta la cantidad de sucursales en una ciudad
+ * 
+ * @param ciudad Arreglo que representa la ciudad
+ * @param c Cantidad de columnas en el arreglo
+ * @return int con la cantidad de sucursales
+ */
+int cantidadSucursales(int *ciudad,int c)
 {
-    //Hola mundo
-    int columnas,filas;
-    int *ciudad = openFile(argv[1],&columnas,&filas);
-   // ciudad[4] = 7; esto solo esta porque anduve probando si funcionaba
-    imprimirCiudad(ciudad,columnas);
-    
-    //Muestra un arreglo con 0 y 1 para verificar si la sucursal es correcta o no en la ciudad
-    for (size_t i = 0; i < columnas; i++)
+    int sucursales = 0;    
+    for (size_t i = 0; i < c; i++)
     {
-        printf("| %d| ",verificarCiudad(ciudad,i,columnas));
+        if (ciudad[i] != -1)
+            sucursales+=1;    
+    }
+    return sucursales;
+}
+
+/**
+ * @brief Crea una copia de una ciudad
+ * @param ciudad Arreglo que representa una ciudad
+ * @param col Cantidad de columnas en el arreglo
+ * @return Arreglo de enteros
+ */ 
+int * copiarCiudad(int *ciudad,int col)
+{
+    int *nuevaCiudad = (int *)malloc(col*sizeof(int)); 
+    for (size_t i = 0; i < col; i++)
+    {
+        nuevaCiudad[i] = ciudad[i];
+    }
+    return nuevaCiudad;
+}
+
+/**
+ * @brief Busca todas las ciudades que cumplan los requisitos de las sucursales por busqueda en profundidad, en el caso de que el camino recorrido no tenga mas 
+ *        ciudades se regresa a un camino anterior
+ * @param ciudad Arreglo de enteros
+ * @param actual Columna que se esta revisando
+ * @param c Cantidad de columnas en el arreglo
+ * @param f Cantidad de filas en el arreglo
+ * @param solucion Arreglo por referencia de enteros
+ */
+void backtracking(int *ciudad,int actual,int c,int f,int **solucion)
+{
+    if ( actual>=c )    // Si se lograron colocar todas las sucursales
+    {
+        return;
     }
 
+    if ( ciudad[actual]!=-1 )    
+        backtracking(ciudad,actual+1,c,f,solucion); 
+    else
+    {
+        for ( ciudad[actual]=0; ciudad[actual]<f; ciudad[actual]++)
+        {  
+            if ( verificarCiudad(ciudad,actual,c) )
+            {
+                if( cantidadSucursales(ciudad,c)>cantidadSucursales((*solucion),c)){
+                    free((*solucion));
+                    (*solucion) = copiarCiudad(ciudad,c);
+                }
+                backtracking(ciudad,actual+1,c,f,solucion);
+            }                
+        }
+        ciudad[actual]=-1;
+    }                   
+    return;      
+}
+
+int main(int argc, char const *argv[])
+{
+    int columnas,filas;
+    int *ciudad = openFile(argv[1],&columnas,&filas);
+    int *solucion = copiarCiudad(ciudad,columnas);
+    
+ 
+    imprimirCiudad(ciudad,columnas);
+    printf("\n");    
+    //Muestra un arreglo con 0 y 1 para verificar si la sucursal es correcta o no en la ciudad
+    printf("\t");
+    for (size_t i = 0; i < columnas; i++)
+    {
+        printf("|  %d",verificarCiudad(ciudad,i,columnas));
+    }
+
+    printf("\n\n");
+    backtracking(ciudad,0,columnas,filas,&solucion);   
+    imprimirCiudad(solucion,columnas);
+    //Muestra un arreglo con 0 y 1 para verificar si la sucursal es correcta o no en la ciudad solucion
+    printf("\t");
+    for (size_t i = 0; i < columnas; i++)
+    {
+        printf("|  %d",verificarCiudad(solucion,i,columnas));
+    }
+    
+
+    free(solucion);
     free(ciudad);
     return 0;
 }
