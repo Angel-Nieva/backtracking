@@ -98,13 +98,13 @@ int verificarCiudad(int *ciudad, int Ncolumna, int col){
  * @brief Cuenta la cantidad de sucursales en una ciudad
  * 
  * @param ciudad Arreglo que representa la ciudad
- * @param c Cantidad de columnas en el arreglo
+ * @param col Cantidad de columnas en el arreglo
  * @return int con la cantidad de sucursales
  */
-int cantidadSucursales(int *ciudad,int c)
+int cantidadSucursales(int *ciudad,int col)
 {
     int sucursales = 0;    
-    for (size_t i = 0; i < c; i++)
+    for (size_t i = 0; i < col; i++)
     {
         if (ciudad[i] != -1)
             sucursales+=1;    
@@ -133,35 +133,35 @@ int * copiarCiudad(int *ciudad,int col)
  *        ciudades se regresa a un camino anterior
  * @param ciudad Arreglo de enteros
  * @param actual Columna que se esta revisando
- * @param c Cantidad de columnas en el arreglo
- * @param f Cantidad de filas en el arreglo
+ * @param col Cantidad de columnas en el arreglo
+ * @param fil Cantidad de filas en el arreglo
  * @param solucion Arreglo por referencia de enteros
  */
-void backtracking(int *ciudad,int actual,int c,int f,int **solucion)
+void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
 {
-    if ( actual>=c )    // Si se lograron colocar todas las sucursales
-    {
-        return;
-    }
+    if ( actual>=col )
+        return; 
 
-    if ( ciudad[actual]!=-1 )    
-        backtracking(ciudad,actual+1,c,f,solucion); 
+    if ( ciudad[actual]!=-1 )                       // Si la columna contaba con una sucursal inicialmente
+        backtracking(ciudad,actual+1,col,fil,solucion);    
     else
     {
-        for ( ciudad[actual]=0; ciudad[actual]<f; ciudad[actual]++)
-        {  
-            if ( verificarCiudad(ciudad,actual,c) )
+        for (size_t i = 0; i < fil; i++)                  // Para cada columna en el arreglo
+        {
+            ciudad[actual] = i;
+            if ( verificarCiudad(ciudad,actual,col) )
             {
-                if( cantidadSucursales(ciudad,c)>cantidadSucursales((*solucion),c)){
-                    free((*solucion));
-                    (*solucion) = copiarCiudad(ciudad,c);
+                if( cantidadSucursales(ciudad,col)>cantidadSucursales((*solucion),col))
+                {
+                        free((*solucion));
+                        (*solucion) = copiarCiudad(ciudad,col);
                 }
-                backtracking(ciudad,actual+1,c,f,solucion);
+                backtracking(ciudad,actual+1,col,fil,solucion);        
             }                
         }
-        ciudad[actual]=-1;
-    }                   
-    return;      
+        ciudad[actual] = -1;
+    }      
+    return;
 }
 
 int main(int argc, char const *argv[])
