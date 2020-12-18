@@ -128,9 +128,10 @@ int * copiarCiudad(int *ciudad,int col)
     return nuevaCiudad;
 }
 
+
 /**
- * @brief Busca todas las ciudades que cumplan los requisitos de las sucursales por busqueda en profundidad, en el caso de que el camino recorrido no tenga mas 
- *        ciudades se regresa a un camino anterior
+ * @brief Busca todas las ciudades que cumplan los requisitos de las sucursales por busqueda en profundidad, 
+ *        en el caso de que el camino recorrido no tenga mas ciudades se regresa a un camino anterior
  * @param ciudad Arreglo de enteros
  * @param actual Columna que se esta revisando
  * @param col Cantidad de columnas en el arreglo
@@ -164,32 +165,56 @@ void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
     return;
 }
 
+/**
+ * @brief Transforma la ciudad en un string posible de visualizar y guardar en un archivo de texto
+ * @param ciudad Arreglo de enteros
+ * @param col Cantidad de columnas en el arreglo
+ * @return char *String
+ */
+char * ciudadToString(int *ciudad,int col)
+{
+    char *buffer = malloc(sizeof(char)*1000);
+    int a = 0;
+    a += snprintf(buffer+a,1000-a,"Cantidad de sucursales en la ciudad: %d\n",cantidadSucursales(ciudad,col));
+    //strcat(buffer,"La ciudad cuenta con %d sucursales.\n|");
+    a += snprintf(buffer+a,1000-a,"Lista cordenadas sucursales (x,y):\n|");
+    for (size_t i = 0; i < col; i++)
+	{
+        if ( ciudad[i] != -1 )
+        {
+            a += snprintf(buffer+a,1000-a," (%d,%d) |",ciudad[i],i);  
+        }        
+            
+	}
+    
+    /*>>>>>>>> FALTA GUARDAR LA MATRIZ CON LA CIUDAD <<<<<<<<<<<<<<<*/
+    return buffer;
+}
+
+/**
+ * @brief Escribe un archivo con la solucion del problema
+ * 
+ * @param ciudad Arreglo que representa la ciudad solucion
+ * @param filename i.e salida.out
+ */
+void writeFile(int *ciudad,int col,const char*filename)
+{
+    char *buffer = ciudadToString(ciudad,col);
+    FILE *fp;
+    fp = fopen(filename, "w+");
+    fputs(buffer,fp);
+    fclose(fp);
+    free(buffer);
+}
+
 int main(int argc, char const *argv[])
 {
     int columnas,filas;
     int *ciudad = openFile(argv[1],&columnas,&filas);
     int *solucion = copiarCiudad(ciudad,columnas);
     
- 
-    imprimirCiudad(ciudad,columnas);
-    printf("\n");    
-    //Muestra un arreglo con 0 y 1 para verificar si la sucursal es correcta o no en la ciudad
-    printf("\t");
-    for (size_t i = 0; i < columnas; i++)
-    {
-        printf("|  %d",verificarCiudad(ciudad,i,columnas));
-    }
-
-    printf("\n\n");
-    backtracking(ciudad,0,columnas,filas,&solucion);   
-    imprimirCiudad(solucion,columnas);
-    //Muestra un arreglo con 0 y 1 para verificar si la sucursal es correcta o no en la ciudad solucion
-    printf("\t");
-    for (size_t i = 0; i < columnas; i++)
-    {
-        printf("|  %d",verificarCiudad(solucion,i,columnas));
-    }
-    
+    backtracking(ciudad,0,columnas,filas,&solucion);
+    writeFile(solucion,columnas,argv[2]);
 
     free(solucion);
     free(ciudad);
