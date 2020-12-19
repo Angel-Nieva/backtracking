@@ -171,7 +171,7 @@ void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
  * @param col Cantidad de columnas en el arreglo
  * @return char *String
  */
-char * ciudadToString(int *ciudad,int col)
+char * ciudadToString(int *ciudad,int col,int fil)
 {
     char *buffer = malloc(sizeof(char)*1000);
     int a = 0;
@@ -182,10 +182,28 @@ char * ciudadToString(int *ciudad,int col)
 	{
         if ( ciudad[i] != -1 )
         {
-            a += snprintf(buffer+a,1000-a," (%d,%d) |",ciudad[i],i);  
+            a += snprintf(buffer+a,1000-a," (%d,%d) |",ciudad[i],i);  //snprintf transforma a string
         }        
             
 	}
+    a += snprintf(buffer+a,1000-a,"\n");
+
+    for (size_t n = 0; n < fil; n++)
+    {
+        for (size_t i = 0; i < col; i++)
+        {
+            if ( ciudad[i] != -1 && ciudad[i] == n )
+            {
+                a += snprintf(buffer+a,1000-a,"x ",ciudad[i],i);  //snprintf transforma a string
+            }
+            else
+            {
+               a += snprintf(buffer+a,1000-a,"_ ");  //snprintf transforma a string 
+            }       
+                
+        }
+        a += snprintf(buffer+a,1000-a,"\n");
+    }
     
     /*>>>>>>>> FALTA GUARDAR LA MATRIZ CON LA CIUDAD <<<<<<<<<<<<<<<*/
     return buffer;
@@ -197,9 +215,9 @@ char * ciudadToString(int *ciudad,int col)
  * @param ciudad Arreglo que representa la ciudad solucion
  * @param filename i.e salida.out
  */
-void writeFile(int *ciudad,int col,const char*filename)
+void writeFile(int *ciudad,int col,const char*filename,int fil)
 {
-    char *buffer = ciudadToString(ciudad,col);
+    char *buffer = ciudadToString(ciudad,col,fil);
     FILE *fp;
     fp = fopen(filename, "w+");
     fputs(buffer,fp);
@@ -214,7 +232,7 @@ int main(int argc, char const *argv[])
     int *solucion = copiarCiudad(ciudad,columnas);
     
     backtracking(ciudad,0,columnas,filas,&solucion);
-    writeFile(solucion,columnas,argv[2]);
+    writeFile(solucion,columnas,argv[2],filas);
 
     free(solucion);
     free(ciudad);
