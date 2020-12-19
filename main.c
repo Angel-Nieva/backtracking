@@ -97,8 +97,8 @@ int verificarCiudad(int *ciudad, int Ncolumna, int col)
 }
 /**
  * @brief Verifica si una ciudad inicial cumple con las condiciones de las sucursales, no repetir columnas,filas ni diagonales
- * @return int 1 si la ciudad cumple con las condiciones, 0 en caso contrario
  * @param veridicador es la variable en la que se guarda el valor de verificar ciudad
+ * @return int 1 si la ciudad cumple con las condiciones, 0 en caso contrario
  */
 int verificarCiudadInicial(int *ciudad,int col)
 {
@@ -180,6 +180,7 @@ void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
             }                
         }
         ciudad[actual] = -1;
+        backtracking(ciudad,actual+1,col,fil,solucion);
     }      
     return;
 }
@@ -223,8 +224,6 @@ char * ciudadToString(int *ciudad,int col,int fil)
         }
         a += snprintf(buffer+a,1000-a,"\n");
     }
-    
-    /*>>>>>>>> FALTA GUARDAR LA MATRIZ CON LA CIUDAD <<<<<<<<<<<<<<<*/
     return buffer;
 }
 
@@ -249,8 +248,8 @@ int main(int argc, char const *argv[])
     int columnas,filas;
     int *ciudad = openFile(argv[1],&columnas,&filas);
     int *solucion = copiarCiudad(ciudad,columnas);
-    int verificador = verificarCiudadInicial(ciudad,columnas);
-    if (verificador == 1)
+
+    if ( verificarCiudadInicial(ciudad,columnas) )
     {
     backtracking(ciudad,0,columnas,filas,&solucion);
     writeFile(solucion,columnas,argv[2],filas);
@@ -260,7 +259,7 @@ int main(int argc, char const *argv[])
     }
     else
     {
-        printf("error de archivo de entrada\n");
+        printf("Error de archivo de entrada\n");
     }
     return 0;
 }
