@@ -38,7 +38,8 @@ int * openFile(const char * filename,int *col,int *fil)
 	return ciudad;    
 }
 
-void imprimirCiudad(int *ciudad,int col){
+void imprimirCiudad(int *ciudad,int col)
+{
 	printf("\t*");
 	for (size_t i = 0; i < col; i++)
 	{
@@ -74,7 +75,8 @@ void imprimirCiudad(int *ciudad,int col){
  * @param col Cantidad de columnas en el arreglo
  * @return int 1 si la ciudad cumple con las condiciones, 0 en caso contrario
  */
-int verificarCiudad(int *ciudad, int Ncolumna, int col){
+int verificarCiudad(int *ciudad, int Ncolumna, int col)
+{
     int suma = Ncolumna + ciudad[Ncolumna];  // es la suma de las filas y columnas para verificar si tiene alguna diagonal
     int resta = ciudad[Ncolumna]- Ncolumna;  // lo mismo que el anterior pero con la resta
     for (size_t i = 0; i < col; i++)    // Mientras no se revisen todas las columnas, en si esto ira revisando si se encuentra otra red de forma horizontal o diagonal
@@ -93,7 +95,24 @@ int verificarCiudad(int *ciudad, int Ncolumna, int col){
     }
     return 1;
 }
-
+/**
+ * @brief Verifica si una ciudad inicial cumple con las condiciones de las sucursales, no repetir columnas,filas ni diagonales
+ * @return int 1 si la ciudad cumple con las condiciones, 0 en caso contrario
+ * @param veridicador es la variable en la que se guarda el valor de verificar ciudad
+ */
+int verificarCiudadInicial(int *ciudad,int col)
+{
+    int verificador;
+    for (size_t i = 0; i < col; i++)
+    {
+        verificador = verificarCiudad(ciudad,i,col);
+        if (verificador == 0)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
 /**
  * @brief Cuenta la cantidad de sucursales en una ciudad
  * 
@@ -230,11 +249,18 @@ int main(int argc, char const *argv[])
     int columnas,filas;
     int *ciudad = openFile(argv[1],&columnas,&filas);
     int *solucion = copiarCiudad(ciudad,columnas);
-    
+    int verificador = verificarCiudadInicial(ciudad,columnas);
+    if (verificador == 1)
+    {
     backtracking(ciudad,0,columnas,filas,&solucion);
     writeFile(solucion,columnas,argv[2],filas);
 
     free(solucion);
     free(ciudad);
+    }
+    else
+    {
+        printf("error de archivo de entrada\n");
+    }
     return 0;
 }
