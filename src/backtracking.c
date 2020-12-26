@@ -15,25 +15,22 @@
  */
 void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
 {
+    #ifdef DEBUG
+
+        printf("%s\n",ciudadToString(ciudad,col,fil));
+
+    #endif
 
     if ( actual>=col )
         return; 
 
     if ( ciudad[actual]!=-1 )                       // Si la columna contaba con una sucursal inicialmente
-        #ifdef DEBUG
-
-            printf("%s\n",ciudadToString(ciudad,col,fil));
-
-        #endif
+        
 
         backtracking(ciudad,actual+1,col,fil,solucion);    
     else
     {
-        #ifdef DEBUG
 
-            printf("%s\n",ciudadToString(ciudad,col,fil));
-
-        #endif
         for (size_t i = 0; i < fil; i++)                  // Para cada columna en el arreglo
         {
             ciudad[actual] = i;
