@@ -1,6 +1,8 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "../incl/backtracking.h"
 #include "../incl/ciudad.h"
+#include "../incl/array.h"
 
 /**
  * @brief Busca todas las ciudades que cumplan los requisitos de las sucursales por busqueda en profundidad, 
@@ -13,6 +15,7 @@
  */
 void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
 {
+
     if ( actual>=col )
         return; 
 
@@ -30,10 +33,19 @@ void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
                         free((*solucion));
                         (*solucion) = copiarCiudad(ciudad,col);
                 }
+                #ifdef DEBUG
+
+                    printf("modo debug %s\n",ciudadToString(ciudad,col,fil));
+
+                 #endif
                 backtracking(ciudad,actual+1,col,fil,solucion);        
             }                
         }
         ciudad[actual] = -1;
+            #ifdef DEBUG
+
+                    printf("modo debug %s\n",ciudadToString(ciudad,col,fil));
+                #endif
         backtracking(ciudad,actual+1,col,fil,solucion);
     }      
     return;
