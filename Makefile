@@ -18,7 +18,7 @@ OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
 all: $(OBJECTS)
 	echo "Generando ejecutable..."
-	gcc $^ $(OPTIONS) -o ejemplo
+	gcc $^ $(OPTIONS) -o backtracking
 
 
 $(OBJ)/%.o: $(SRC)/%.c

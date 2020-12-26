@@ -1,8 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include "./incl/ciudad.h"
-#include "./incl/array.h"
-#include "./incl/backtracking.h"
+#include "../incl/ciudad.h"
+#include "../incl/array.h"
+#include "../incl/backtracking.h"
 
 int main(int argc, char const *argv[])
 {
