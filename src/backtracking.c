@@ -35,7 +35,7 @@ void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
                 }
                 #ifdef DEBUG
 
-                    printf("modo debug %s\n",ciudadToString(ciudad,col,fil));
+                    printf("%s\n",ciudadToString(ciudad,col,fil));
 
                  #endif
                 backtracking(ciudad,actual+1,col,fil,solucion);        
@@ -44,7 +44,7 @@ void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
         ciudad[actual] = -1;
             #ifdef DEBUG
 
-                    printf("modo debug %s\n",ciudadToString(ciudad,col,fil));
+                    printf("%s\n",ciudadToString(ciudad,col,fil));
                 #endif
         backtracking(ciudad,actual+1,col,fil,solucion);
     }      
