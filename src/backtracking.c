@@ -14,34 +14,39 @@
  * @param solucion Arreglo por referencia de enteros
  */
 void backtracking(int *ciudad,int actual,int col,int fil,int **solucion)
-{
-    #ifdef DEBUG
+{  
+    
+    if ( actual>=col )        // Si ya se revisaron todas las columnas
+        return;
+   
+    if ( ciudad[actual]!=-1 ) // Si la columna contaba con una sucursal inicialmente       
+        backtracking(ciudad,actual+1,col,fil,solucion);
 
-        printf("%s\n",ciudadToString(ciudad,col,fil));
-
-    #endif
-
-    if ( actual>=col )
-        return; 
-
-    if ( ciudad[actual]!=-1 )                       // Si la columna contaba con una sucursal inicialmente
-        
-
-        backtracking(ciudad,actual+1,col,fil,solucion);    
     else
     {
-
-        for (size_t i = 0; i < fil; i++)                  // Para cada columna en el arreglo
+        for (size_t i = 0; i < fil; i++) // Para cada columna en el arreglo
         {
             ciudad[actual] = i;
             if ( verificarCiudad(ciudad,actual,col) )
             {
-                if( cantidadSucursales(ciudad,col)>cantidadSucursales((*solucion),col))
+                // Si se encuentra el caso optimo, se termina la busqueda
+                if ( ( col==fil && cantidadSucursales((*solucion),col) == col ) ||  
+                     ( col>fil && cantidadSucursales((*solucion),col) == fil  ) ||                                 
+                     ( col<fil && cantidadSucursales((*solucion),col) == col  )  )
+                {           
+                    return;    
+                } 
+                if( cantidadSucursales(ciudad,col)>cantidadSucursales((*solucion),col) )
                 {
                         free((*solucion));
                         (*solucion) = copiarCiudad(ciudad,col);
                 }
-                
+                #ifdef DEBUG
+
+                    printf("%s\n",ciudadToString(ciudad,col,fil));
+
+                #endif
+            
                 backtracking(ciudad,actual+1,col,fil,solucion);        
             }                
         }
